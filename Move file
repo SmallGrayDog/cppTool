@@ -1,0 +1,53 @@
+// 18_1122CPPProject.cpp : 此文件包含 "main" 函数。程序执行将在此处开始并结束。
+//
+
+#include "pch.h"
+#include "StrBlob.h"
+#include <iostream>
+#include <vector>
+#include <string>
+#include <cctype>
+#include "io.h"
+
+void dfsFolder(string folderPath)
+{
+	_finddata_t FileInfo;
+	string strfind = folderPath + "\\*";
+	long Handle = _findfirst(strfind.c_str(), &FileInfo);
+
+	if (Handle == -1L)
+	{
+		std::cerr << "can not match the folder path" << std::endl;
+		exit(-1);
+	}
+
+	do
+	{
+		if (FileInfo.attrib & _A_SUBDIR)
+		{
+			if ((strcmp(FileInfo.name, ".") != 0) && (strcmp(FileInfo.name, "..") != 0))
+			{
+				string newPath = folderPath + "\\" + FileInfo.name;
+				dfsFolder(newPath);
+			}
+		}
+		else
+		{
+			string FileName = FileInfo.name;
+			string suffixStr = FileName.substr(FileName.find_last_of(".") + 1);
+			if (suffixStr == "txt")
+			{
+				string cmd = "move " + folderPath + "\\" + FileName + " " + "F:\\cc\\" + FileName;
+
+				system(cmd.c_str());
+			}
+		}
+	} while (_findnext(Handle, &FileInfo) == 0);
+}
+
+int main()
+{
+	dfsFolder("F:\\zz");
+
+	int zz = 1;
+}
